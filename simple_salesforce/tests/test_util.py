@@ -1,7 +1,9 @@
 """Tests for simple-salesforce utility functions"""
 import datetime
+import json
+import subprocess
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytz
 from simple_salesforce.exceptions import (SalesforceExpiredSession,
@@ -13,10 +15,6 @@ from simple_salesforce.exceptions import (SalesforceExpiredSession,
 from simple_salesforce.util import (date_to_iso8601, exception_handler,
                                     getUniqueElementValueFromXmlString,
                                     get_cli_session)
-
-import json
-import subprocess
-from unittest.mock import patch
 
 class TestXMLParser(unittest.TestCase):
     """Test the XML parser utility function"""
