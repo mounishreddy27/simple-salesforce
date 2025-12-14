@@ -1,11 +1,15 @@
 """Utility functions for simple-salesforce"""
 
 import datetime
+import json
+import shutil
+import subprocess
 import xml.dom.minidom
 from typing import Any, Iterable, List, Mapping, MutableMapping, NamedTuple, \
     NoReturn, \
     Optional, \
     Tuple, TypeVar, Union
+from urllib.parse import urlparse
 
 import requests
 
@@ -13,11 +17,6 @@ from .exceptions import (SalesforceExpiredSession, SalesforceGeneralError,
                          SalesforceMalformedRequest,
                          SalesforceMoreThanOneRecord, SalesforceRefusedRequest,
                          SalesforceResourceNotFound)
-
-from urllib.parse import urlparse
-import json
-import subprocess
-import shutil
 
 Headers = MutableMapping[str, str]
 Proxies = MutableMapping[str, str]
@@ -134,7 +133,7 @@ def get_cli_session(target_org: Optional[str] = None) -> Tuple[str, str]:
         A tuple of (access_token, instance_url)
     """
 
-    # 1. Find the full path to the executable
+    # Find the Salesforce CLI executable (sf or sfdx)
     executable = shutil.which("sf") or shutil.which("sfdx")
 
     if not executable:
