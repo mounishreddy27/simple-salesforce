@@ -5,7 +5,7 @@ import xml.dom.minidom
 from typing import Any, Iterable, List, Mapping, MutableMapping, NamedTuple, \
     NoReturn, \
     Optional, \
-    TypeVar, Union
+    Tuple, TypeVar, Union
 
 import requests
 
@@ -123,16 +123,22 @@ def list_from_generator(
         ret_val.extend(list_results)
     return ret_val
 
-def get_cli_session(target_org=None):
+def get_cli_session(target_org: Optional[str] = None) -> Tuple[str, str]:
     """
     Helper to get session from Salesforce CLI (sf).
+    
+    Args:
+        target_org: Optional alias or username of the org to use
+        
+    Returns:
+        A tuple of (access_token, instance_url)
     """
 
     # 1. Find the full path to the executable
     executable = shutil.which("sf") or shutil.which("sfdx")
 
     if not executable:
-        raise Exception("Salesforce CLI not found. Please install it from: https://developer.salesforce.com/tools/salesforcecli or check your PATH.")
+        raise ValueError("Salesforce CLI not found. Please install it from: https://developer.salesforce.com/tools/salesforcecli or check your PATH.")
 
     command = [executable, 'org', 'display', '--json']
 

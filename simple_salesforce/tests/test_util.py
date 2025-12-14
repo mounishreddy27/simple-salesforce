@@ -149,13 +149,13 @@ class TestUtilCli(unittest.TestCase):
 
     @patch('shutil.which')
     def test_cli_not_found(self, mock_which):
-        """Test that we raise an Exception if neither sf nor sfdx is found"""
+        """Test that we raise ValueError if neither sf nor sfdx is found"""
         
         # Setup: Return None for both checks
         mock_which.return_value = None
         
-        # Verify it raises the generic Exception you defined
-        with self.assertRaises(Exception) as context:
+        # Verify it raises ValueError
+        with self.assertRaises(ValueError) as context:
             get_cli_session()
         
         self.assertIn("Salesforce CLI not found", str(context.exception))
