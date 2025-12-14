@@ -9,7 +9,6 @@ from typing import Any, Iterable, List, Mapping, MutableMapping, NamedTuple, \
     NoReturn, \
     Optional, \
     Tuple, TypeVar, Union
-from urllib.parse import urlparse
 
 import requests
 
