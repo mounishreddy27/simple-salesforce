@@ -126,10 +126,10 @@ def list_from_generator(
 def get_cli_session(target_org: Optional[str] = None) -> Tuple[str, str]:
     """
     Helper to get session from Salesforce CLI (sf).
-    
+
     Args:
         target_org: Optional alias or username of the org to use
-        
+
     Returns:
         A tuple of (access_token, instance_url)
     """
@@ -144,19 +144,19 @@ def get_cli_session(target_org: Optional[str] = None) -> Tuple[str, str]:
 
     if target_org:
         command.extend(['--target-org', target_org])
-        
+
     try:
         # check=True ensures we raise an error if command fails
         result = subprocess.run(
-            command, 
-            capture_output=True, 
-            text=True, 
+            command,
+            capture_output=True,
+            text=True,
             check=True
         )
         data = json.loads(result.stdout)
 
         return data['result']['accessToken'], data['result']['instanceUrl']
-        
+
     except subprocess.CalledProcessError as e:
         err_msg = e.stderr if e.stderr else str(e)
         raise ValueError(f"Salesforce CLI failed: {err_msg}")
