@@ -59,8 +59,8 @@ class Salesforce:
             parse_float: Optional[Callable[[str], Any]] = None,
             object_pairs_hook: Optional[Callable[[List[Tuple[Any, Any]]], Any]]
             = OrderedDict,
-            use_cli=False,
-            target_org=None,
+            use_cli: bool = False,
+            target_org: Optional[str] = None,
             ):
 
         """Initialize the instance with the given parameters.
