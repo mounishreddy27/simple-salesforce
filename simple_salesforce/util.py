@@ -5,7 +5,7 @@ import xml.dom.minidom
 from typing import Any, Iterable, List, Mapping, MutableMapping, NamedTuple, \
     NoReturn, \
     Optional, \
-    TypeVar, Union
+    Tuple, TypeVar, Union
 
 import requests
 
@@ -13,6 +13,11 @@ from .exceptions import (SalesforceExpiredSession, SalesforceGeneralError,
                          SalesforceMalformedRequest,
                          SalesforceMoreThanOneRecord, SalesforceRefusedRequest,
                          SalesforceResourceNotFound)
+
+from urllib.parse import urlparse
+import json
+import subprocess
+import shutil
 
 Headers = MutableMapping[str, str]
 Proxies = MutableMapping[str, str]
@@ -117,3 +122,41 @@ def list_from_generator(
     for list_results in generator_function:
         ret_val.extend(list_results)
     return ret_val
+
+def get_cli_session(target_org: Optional[str] = None) -> Tuple[str, str]:
+    """
+    Helper to get session from Salesforce CLI (sf).
+    
+    Args:
+        target_org: Optional alias or username of the org to use
+        
+    Returns:
+        A tuple of (access_token, instance_url)
+    """
+
+    # 1. Find the full path to the executable
+    executable = shutil.which("sf") or shutil.which("sfdx")
+
+    if not executable:
+        raise ValueError("Salesforce CLI not found. Please install it from: https://developer.salesforce.com/tools/salesforcecli or check your PATH.")
+
+    command = [executable, 'org', 'display', '--json']
+
+    if target_org:
+        command.extend(['--target-org', target_org])
+        
+    try:
+        # check=True ensures we raise an error if command fails
+        result = subprocess.run(
+            command, 
+            capture_output=True, 
+            text=True, 
+            check=True
+        )
+        data = json.loads(result.stdout)
+
+        return data['result']['accessToken'], data['result']['instanceUrl']
+        
+    except subprocess.CalledProcessError as e:
+        err_msg = e.stderr if e.stderr else str(e)
+        raise ValueError(f"Salesforce CLI failed: {err_msg}")
